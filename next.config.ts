@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   cacheComponents: true,
+  images: {
+    remotePatterns: [new URL('https://cdn.dummyjson.com/product-images/**')],
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {
