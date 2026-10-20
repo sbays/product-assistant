@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import z from "zod";
-import { searchProducts as findProducts, getProduct } from '../products'
+import { searchProducts as findProducts, getProduct, getReviews } from '../products'
 import { saveEnquiry } from "../enquiries";
 import { CATEGORIES } from "../products";
 import { comparisonSchema } from "./schemas";
@@ -52,7 +52,9 @@ export const getProducts = tool({
         // if (!p) {
         //   throw new Error(`Product ${id} not found`)
         // }
-        const { images, meta, reviews, ...details } = p;
+        const { images, meta, ...details } = p;
+        // getReviews includes reviews submitted through the site, not only the seed data
+        const reviews = await getReviews(id.toString());
         return {
           found: true as const,
           ...details,
