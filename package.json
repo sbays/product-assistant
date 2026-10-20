@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "try-agent": "tsx --conditions=react-server --env-file=.env.local scripts/try-agent.mts",
+    "try-get-products": "tsx --conditions=react-server --env-file=.env.local scripts/try-get-products.mts",
     "try-search": "tsx --conditions=react-server --env-file=.env.local scripts/try-search.mts",
     "try-structured": "tsx --conditions=react-server --env-file=.env.local scripts/try-structured.mts"
   },
