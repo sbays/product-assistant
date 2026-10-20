@@ -3,9 +3,10 @@
 import type { ChatAddToolApproveResponseFunction } from 'ai';
 import ComparisonTable from './comparison-table';
 import EnquiryApproval from './enquiry-approval';
-import { ProductDetails, SearchResults } from './product-results';
+import { ProductDetails } from './product-results';
 import { ToolError, ToolPending } from './tool-status';
 import type { ChatPart } from './types';
+import { SearchResults } from './search-results';
 
 type Props = {
   part: ChatPart;

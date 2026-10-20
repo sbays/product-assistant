@@ -1,7 +1,7 @@
 import StarRating from '@/app/components/star-rating';
 import type { Comparison } from '@/app/lib/agent/schemas';
 
-const priceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const priceFormatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' });
 
 function PointList({ points }: { points: string[] }) {
   if (points.length === 0) return <span className="text-zinc-500 dark:text-zinc-400">None noted</span>;

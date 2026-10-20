@@ -3,7 +3,7 @@ import Link from "next/link"
 import { getProducts } from "@/app/lib/catalogue"
 import StarRating from "@/app/components/star-rating"
 
-const priceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+const priceFormatter = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' })
 
 export default async function ProductsPage() {
   const products = await getProducts()
