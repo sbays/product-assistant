@@ -20,6 +20,51 @@ pnpm dev
 | `pnpm e2e` | Playwright against `PLAYWRIGHT_BASE_URL`, or the local dev server |
 | `pnpm try-agent`, `pnpm try-injection` | Run the real agent from the terminal (spends tokens) |
 
+## Vercel setup
+
+The region (`lhr1`) is in `vercel.json`, but the rest of this lives in the Vercel project, not the repo. Recreate
+it with the commands below.
+
+**Environment variables.** Use different values for Preview and Production, all Sensitive. There's no model API key:
+deployments reach AI Gateway with OIDC.
+
+```bash
+for env in production preview; do
+  openssl rand -base64 32 | vercel env add TOOL_APPROVAL_SECRET $env --sensitive  # signs tool approvals
+  openssl rand -base64 32 | vercel env add REVALIDATE_SECRET $env --sensitive     # /api/revalidate webhook
+done
+```
+
+`/api/chat` returns 500 on Vercel if `TOOL_APPROVAL_SECRET` is missing, rather than accepting unsigned approvals.
+Env vars only reach new deployments, so redeploy after changing them.
+
+**E2E bypass.** Turn on *Protection Bypass for Automation* (Settings → Deployment Protection), then store the
+value as the GitHub Actions secret `VERCEL_AUTOMATION_BYPASS_SECRET`.
+
+**Firewall rate limit on the chat endpoint.** It runs at the edge, so requests over the limit never reach the
+function or the model, and blocked requests aren't billed.
+
+```bash
+vercel firewall rules add "Rate limit chat per IP" \
+  --condition '{"type":"path","op":"eq","value":"/api/chat"}' \
+  --condition '{"type":"method","op":"eq","value":"POST"}' \
+  --action rate_limit \
+  --rate-limit-window 60 --rate-limit-requests 30 --rate-limit-keys ip \
+  --rate-limit-action log \
+  --yes
+vercel firewall publish --yes
+```
+
+It starts in `log` mode at 30 requests a minute, which is several times normal use: each chat turn is one POST,
+plus one when answering an approval. Once the traffic view shows it never catches real use, enforce it:
+
+```bash
+vercel firewall rules edit "Rate limit chat per IP" --rate-limit-requests 10 --rate-limit-action rate_limit --yes
+vercel firewall publish --yes
+```
+
+Clients over the limit get a 429, which the chat shows with a retry button.
+
 ## Architecture
 
 ```
@@ -58,6 +103,7 @@ Browser                         Vercel Function (lhr1)                 AI Gatewa
   caps body size, message count and user message length, and validates every part against the tool schemas.
 - **Abuse limits outside the code.** A Vercel Firewall rate limit on `/api/chat` per IP, an 8-step loop limit,
   `maxDuration = 60`, `maxOutputTokens = 2048`, and a small AI Gateway balance. Blocked requests aren't billed.
+  The rule is project config rather than code, so its exact definition is under [Vercel setup](#vercel-setup).
 - **A cheap, fast model.** MiniMax M3.1 Flash through AI Gateway is good enough for catalogue Q&A with tools.
   Swapping models is one env var (`AI_MODEL`).
 - **Region `lhr1`.** There's no database to sit next to, so the function region follows the users, who are in
