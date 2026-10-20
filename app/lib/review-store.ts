@@ -1,6 +1,7 @@
 import 'server-only';
 
-import type { Product } from './catalogue';
+import { Product } from "./products";
+
 
 export type Review = Product['reviews'][number];
 
