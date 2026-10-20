@@ -7,15 +7,13 @@ export async function POST(request: NextRequest) {
     return Response.json({ message: 'Server misconfigured' }, { status: 500 })
   }
   const provided = request.headers.get('x-revalidate-secret');
-  if (!provided) return Response.json({
-    status: 401
-  })
+  if (!provided) return Response.json({ message: 'Unauthorized' }, { status: 401 })
   const expected = process.env.REVALIDATE_SECRET;
   const a = Buffer.from(provided);
   const b = Buffer.from(expected);
   const matches = a.length === b.length && timingSafeEqual(a, b)
   if (!matches) {
-    return Response.json({ status: 401 })
+    return Response.json({ message: 'Unauthorized' }, { status: 401 })
   }
 
   revalidateTag('products', 'max')

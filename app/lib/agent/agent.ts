@@ -42,6 +42,8 @@ export const createProductAgent = (model: LanguageModel) => new ToolLoopAgent({
     // hasToolCall('showComparison') // This was being met even when showComparison was failing
   ],
   toolApproval: { sendEnquiry: 'user-approval' },
+  // Signs each approval request, so a client can't forge or replay an approval in the message history
+  experimental_toolApprovalSecret: process.env.TOOL_APPROVAL_SECRET,
   maxOutputTokens: 2048,
   maxRetries: 0,
   // Per-request user-id: check against the "Configuring call options" docs

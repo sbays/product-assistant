@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import HoverPrefetchLink from "@/app/components/hover-prefetch-link"
 import { getProducts } from "@/app/lib/catalogue"
 import StarRating from "@/app/components/star-rating"
 
@@ -13,7 +13,7 @@ export default async function ProductsPage() {
       <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
           <li key={product.id}>
-            <Link
+            <HoverPrefetchLink
               href={`/products/${product.id}`}
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:focus-visible:outline-white"
             >
@@ -37,7 +37,7 @@ export default async function ProductsPage() {
                   <StarRating rating={product.rating} />
                 </div>
               </div>
-            </Link>
+            </HoverPrefetchLink>
           </li>
         ))}
       </ul>
