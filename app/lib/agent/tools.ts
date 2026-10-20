@@ -48,7 +48,10 @@ export const getProducts = tool({
     products: await Promise.all(
       ids.map(async (id) => {
         const p = await getProduct(id.toString());
-        if (!p) return { id, found: false as const };
+        if (!p) return { id, found: false as const, message: "No product with that ID found. Only use IDs from searchProducts." };
+        // if (!p) {
+        //   throw new Error(`Product ${id} not found`)
+        // }
         const { images, meta, reviews, ...details } = p;
         return {
           found: true as const,
