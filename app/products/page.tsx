@@ -9,7 +9,9 @@ export default async function ProductsPage() {
   const products = await getProducts()
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold tracking-tight">Products</h1>
+      <h1 className="mb-8 text-3xl font-bold tracking-tight">
+        Products <span className="text-zinc-500 dark:text-zinc-400">({products.length})</span>
+      </h1>
       <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
           <li key={product.id}>
